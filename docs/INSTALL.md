@@ -1,114 +1,65 @@
-# Installing the RFID Jukebox on your RPi
+## Install Debian Headless on CHIP
+For installing Debian headless, you need to install latest Ubuntu version. 17.10. worked fine for me. Probably it is also possible to just start Ubuntu from USB stick. I did not try that one.
 
-The installation is the first step to get your jukebox up and running. Once you have done this, proceed to the [configuration](CONFIGURE.md).
+After installing Ubuntu install git via
+´´
+sudo apt-get install git
+´´
 
-And Once you finished with the configuration, read the [manual](MANUAL.md) to add audio files and RFID cards.
+Then clone the official CHIP-SDK with
+´´
+git clone https://github.com/NextThingCo/CHIP-SDK
+´´
 
-This project has been tested on Raspberry Pi model 1 and 2. And there is no reason why it shouldn't work on the third generation.
+Then switch to the installed folder CHIP-SDK and run the setup script
+´´
+cd CHIP-SDK
+sudo ./setup-ubuntu1404.sh
+´´
 
-## Install Raspbian on your RPi
+dont worry that it says ubuntu1404. It works perfectly in 1710. 
+Then you can proceed as explaind in the CHIP-SDK github.
+Enter
+´´
+cd CHIP-tools
+sudo ./chip-update-firmware.sh -s
+´´
+for installing headless debian. 
 
-### Burning NOOBS to the SD-card
+## Windows 10 settings for serial connection to Chip
+I did that using Windows 10. First Problem, CHIP is recognized as some weird CDC Gadget. You need to change that in order to connect to the chip via serial connection.
+Open the device manager in windows
+Select "other Devices", then "CDC Composite Gadget", then right click
+Properties > Update driver > browse > let me pick > ports > Microsoft > USB Serial device.
 
-There are a number of operating systems to chose from on the [official RPi download page](https://www.raspberrypi.org/downloads/) on [www.raspberrypi.org](http://www.raspberrypi.org). We want to work with is the official distribution *Raspbian*. The easiest way to install *Raspbian* to your RPi is using the *NOOBS* distribution, which you can find on the download page linked above.
+Now you see in the device manager with the right COM port number. Just connect via putty or anything like that using serial connection to that port (COM9 e.g.) with speed 9600.
 
-On the *NOOBS* download page, there are two flavours of the operating system. Download the version *offline and network install*.
+standart credentials are
+user: chip
+pw: chip
 
-After you downloaded the `zip` file, all you need to do is `unzip` the archive, format a SD-card in `FAT32` and move the unzipped files to the SD-card. For more details, see the [official NOOBS installation page](https://www.raspberrypi.org/learning/software-guide/quickstart/).
+or 
+user: root
+pw: chip
 
-### Installing Raspbian OS after booting your RPi
+make sure you change the passwords with
+´´
+passwd
+´´
+and the root password with
+´´
+sudo passwd root
+´´
 
-Before you boot your RPi for the first time, make sure that you have all the external devices plugged in. What we need at this stage:
 
-1. An external monitor connected over HDMI
-2. A WiFi card over USB (unless you are using a third generation RPi with an inbuilt WiFi card).
-3. A keyboard and mouse over USB.
+## Enable Wifi
+Run 
+´´
+nmtui 
+´´
 
-After the boot process has finished, you can select the operating system we want to work with: *Raspbian*. Select the checkbox and then hit **Install** above the selection.
-
-## Configure your RPi
-
-Now you have installed and operating system and even a windows manager (called Pixel on Raspbian). Start up your RPi and it will bring you straight to the home screen. Notice that you are not required to log in.
-
-### Configure your keyboard
-
-In the dropdown menu at the top of the home screen, select:
-
-'Berry' > Preferences > Mouse and Keyboard Settings
-
-Now select the tab *Keyboard* and then click *Keyboard Layout...* at the bottom right of the window. From the list, select your language layout.
-
-### Configure the WiFi
-
-At the top right of the home screen, in the top bar, you find an icon for *Wireless & Wired Network Settings*. Clicking on this icon will bring up a list of available WiFi networks. Select the one you want to connect with and set the password.
-
-**Disable WiFi power management**
-
-Make sure the WiFi power management is disabled to avoid dropouts. [Follow these instructions](https://gist.github.com/mkb/40bf48bc401ffa0cc4d3#file-gistfile1-md).
-
-### Access over SSH
-
-SSH will allow you to log into the RPi from any machine in the network. This is useful because once the jukebox is up and running, it won't have a keyboard, mouse or monitor attached to it. Via SSH you can still configure the system and make changes - if you must.
-
-Open a terminal to star the RPi configuration tool.
-
-~~~~
-$ sudo raspi-config
-~~~~
-Select `Interface Options` and then `SSH Enable/Disable remote command line...` to enable the remote access.
-
-Find out more about how to [connect over SSH from Windows, Mac, Linux or Android on the official RPi page](https://www.raspberrypi.org/documentation/remote-access/ssh/).
-
-### Autologin after boot
-
-When you start the jukebox, it needs to fire up without stalling at the login screen. This can also be configured using the RPi config tool.
-
-Open a terminal to star the RPi configuration tool.
-
-~~~~
-$ sudo raspi-config
-~~~~
-
-Select `Boot options` and then `Desktop / CLI`. The option you want to pick is `Console Autologin - Text console, automatically logged in as 'pi' user`.
-
-### Set a static IP address for your RPi
-
-To be able to log into your RPi over SSH from any machine in the network, you need to give your machine a static IP address.
-
-Check if the DHCP client daemon (DHCPCD) is active.
-~~~~
-sudo service dhcpcd status
-~~~~
-If you don't get any status, you should start the `dhcpcd` daemon:
-~~~~
-sudo service dhcpcd start
-sudo systemctl enable dhcpcd
-~~~~
-Check the IP address the RPi is running on at the moment:
-~~~~
-$ ifconfig
-
-wlan0     Link encap:Ethernet  HWaddr 74:da:38:28:72:72  
-          inet addr:192.168.178.82  Bcast:192.168.178.255  Mask:255.255.255.0
-          ...
-~~~~
-You can see that the IP address is 192.168.178.82. We want to assign a static address 192.168.178.199.
-
-**Note:** assigning a static address can create conflict with other devices on the same network which might get the same address assigned. Therefore, if you can, check your router configuration and see if you can assign a range of IP addresses for static use.
-
-Change the IPv4 configuration inside the file `/etc/dhcpcd.conf`.
-~~~~
-sudo nano /etc/dhcpcd.conf
-~~~~
-In my case, I added the following lines to assign the static IP. You need to adjust this to your network needs:
-
-~~~~
-interface wlan0
-static ip_address=192.168.178.199/24
-static routers=192.168.178.1
-static domain_name_servers=192.168.178.1
-~~~~
-Save the changes with `Ctrl & O` then `Enter` then `Ctrl & X`.
+and select the correct wifi and enter pw. Afterwards click edit and make sure that automatic reconnection is enabled. 
+Now your good to go to ssh in the chip.
 
 ## Install samba to share folders over your home network
 
@@ -138,9 +89,9 @@ If you are already running a windows home network, add the name of the network w
 Now add the specific folder that we want to be exposed to the home network in the `smb.conf` file. 
 
 ~~~~
-[pi_jukebox]
-   comment= Pi Jukebox
-   path=/home/pi/RPi-Jukebox-RFID/shared
+[musicchest]
+   comment= Musicchest
+   path=/home/chip/shared
    browseable=Yes
    writeable=Yes
    only guest=no
@@ -149,20 +100,25 @@ Now add the specific folder that we want to be exposed to the home network in th
    public=no
 ~~~~
 
-**Note:** the `path` given in this example works (only) if you are installing the jukebox code in the directory `/home/pi/`.
+**Note:** the `path` given in this example works (only) if you are installing the jukebox code in the directory `/home/chip/`.
 
-Finally, add the user `pi` to *Samba*. For simplicity and against better knowledge regarding security, I suggest to stick to the default user and password:
+Finally, add the user `chip` to *Samba*. For simplicity and against better knowledge regarding security, I suggest to stick to the default user and password:
 
 ~~~~
-user     : pi
+user     : chip
 password : raspberry
 ~~~~
 
 Type the following to add the new user:
 
 ~~~~
-$ sudo smbpasswd -a pi
+$ sudo smbpasswd -a chip
 ~~~~
+
+Restart samba to see efect
+´´
+sudo /etc/init.d/samba restart
+´´
 
 ## Adding python libraries
 
