@@ -2,28 +2,28 @@
 For installing Debian headless, you need to install latest Ubuntu version. 17.10. worked fine for me. Probably it is also possible to just start Ubuntu from USB stick. I did not try that one.
 
 After installing Ubuntu install git via
-´´
+``
 sudo apt-get install git
-´´
+``
 
 Then clone the official CHIP-SDK with
-´´
+``
 git clone https://github.com/NextThingCo/CHIP-SDK
-´´
+``
 
 Then switch to the installed folder CHIP-SDK and run the setup script
-´´
+``
 cd CHIP-SDK
 sudo ./setup-ubuntu1404.sh
-´´
+``
 
 dont worry that it says ubuntu1404. It works perfectly in 1710. 
 Then you can proceed as explaind in the CHIP-SDK github.
 Enter
-´´
+``
 cd CHIP-tools
 sudo ./chip-update-firmware.sh -s
-´´
+``
 for installing headless debian. 
 
 ## Windows 10 settings for serial connection to Chip
@@ -43,20 +43,20 @@ user: root
 pw: chip
 
 make sure you change the passwords with
-´´
+``
 passwd
-´´
+``
 and the root password with
-´´
+``
 sudo passwd root
-´´
+``
 
 
 ## Enable Wifi
 Run 
-´´
+``
 nmtui 
-´´
+``
 
 and select the correct wifi and enter pw. Afterwards click edit and make sure that automatic reconnection is enabled. 
 Now your good to go to ssh in the chip.
@@ -67,28 +67,27 @@ To make the jukebox easy to administer, it is important that you can add new son
 
 Open a terminal and install the required packages with this line:
 
-~~~~
-$ sudo apt-get install samba samba-common-bin 
-~~~~
+``
+sudo apt-get install samba samba-common-bin 
+``
 
 First, let's edit the *Samba* configuration file and define the workgroup the RPi should be part of.
 
-~~~~
-$ sudo nano /etc/samba/smb.conf
-~~~~
-
+``
+sudo nano /etc/samba/smb.conf
+``
 Edit the entries for workgroup and wins support:
 
-~~~~
+``
 workgroup = WORKGROUP
 wins support = yes
-~~~~
+``
 
 If you are already running a windows home network, add the name of the network where I have added `WORKGROUP`. 
 
 Now add the specific folder that we want to be exposed to the home network in the `smb.conf` file. 
 
-~~~~
+``
 [musicchest]
    comment= Musicchest
    path=/home/chip/shared
@@ -98,28 +97,25 @@ Now add the specific folder that we want to be exposed to the home network in th
    create mask=0777
    directory mask=0777
    public=no
-~~~~
-
+``
 **Note:** the `path` given in this example works (only) if you are installing the jukebox code in the directory `/home/chip/`.
 
 Finally, add the user `chip` to *Samba*. For simplicity and against better knowledge regarding security, I suggest to stick to the default user and password:
 
-~~~~
+``
 user     : chip
 password : raspberry
-~~~~
-
+``
 Type the following to add the new user:
 
-~~~~
-$ sudo smbpasswd -a chip
-~~~~
+``
+sudo smbpasswd -a chip
+``
 
 Restart samba to see efect
-´´
+``
 sudo /etc/init.d/samba restart
-´´
-
+``
 ## Adding python libraries
 
 ### Installing evdev
