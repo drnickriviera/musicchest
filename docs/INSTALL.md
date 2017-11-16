@@ -190,9 +190,6 @@ Ok, the next step is a severe hack. Quite a radical tweak: we will change the so
 
 Changing the binary code is only a one liner, replacing `geteuid` with `getppid`. If you are interested in the details what this does, you can [read more about the VLC hack here](https://www.blackmoreops.com/2015/11/02/fixing-vlc-is-not-supposed-to-be-run-as-root-sorry-error/).
 
-~~~~Y
-sudo sed -i 's/geteuid/getppid/' /usr/bin/vlc
-~~~~
 
 **Note:** changing the binary of VLC to allow the program to be run by the webserver as a superuser is another little step in a long string of potential security problems. In short: the jukebox is a perfectly fine project to run for your personal pleasure. It's not fit to run on a public server.
 
@@ -205,6 +202,18 @@ While we are using *VLC* for all the media to be played on the jukebox, we are u
 sudo apt-get install mpg123
 ```
 
+## install i2c for communication with arduino
+~~~~
+sudo apt-get install i2c-tools
+sudo apt-get install python-smbus
+~~~~
+
+add chip user to i2c group to have correct permissions.
+~~~~
+sudo usermod -aG i2c chip
+~~~~
+
+
 ## Install git
 
 [*git* is a version control system](https://git-scm.com/) which makes it easy to pull software from GitHub - which is where the jukebox software is located.
@@ -214,6 +223,10 @@ sudo apt-get update
 sudo apt-get install git
 ~~~~
 
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Install the jukebox code
 
 ~~~~
