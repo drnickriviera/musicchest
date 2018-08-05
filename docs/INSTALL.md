@@ -270,3 +270,7 @@ Continue with the configuration in the file [`CONFIGURE.md`](CONFIGURE.md).
 
 I2C: A4 SDA
      A5 SCL
+
+## CHIP
+I2C: TWI1-SDA SDA
+     TWI1-SCK SCL
