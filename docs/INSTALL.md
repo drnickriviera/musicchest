@@ -123,6 +123,21 @@ Restart samba to see efect
 sudo /etc/init.d/samba restart
 ~~~~
 ## Adding python libraries
+Install pip
+~~~~
+sudo apt-get install python-pip
+~~~~
+
+Install gpio lib for chip from https://github.com/xtacocorex/CHIP_IO
+~~~~
+sudo apt-get update
+sudo apt-get install git build-essential python-dev python-pip flex bison chip-dt-overlays -y
+git clone git://github.com/xtacocorex/CHIP_IO.git
+cd CHIP_IO
+sudo python setup.py install
+cd ..
+~~~~
+
 
 ## Running the web app
 
