@@ -123,15 +123,13 @@ Restart samba to see efect
 sudo /etc/init.d/samba restart
 ~~~~
 ## Adding python libraries
-Install pip
+Install python libraries
 ~~~~
-sudo apt-get install python-pip
+sudo apt-get install git build-essential python-dev python-pip flex bison chip-dt-overlays -y
 ~~~~
 
 Install gpio lib for chip from https://github.com/xtacocorex/CHIP_IO
 ~~~~
-sudo apt-get update
-sudo apt-get install git build-essential python-dev python-pip flex bison chip-dt-overlays -y
 git clone git://github.com/xtacocorex/CHIP_IO.git
 cd CHIP_IO
 sudo python setup.py install
@@ -266,3 +264,9 @@ sudo reboot
 # Configure the jukebox
 
 Continue with the configuration in the file [`CONFIGURE.md`](CONFIGURE.md).
+
+# Wiring
+## Arduino Nano
+
+I2C: A4 SDA
+     A5 SCL
