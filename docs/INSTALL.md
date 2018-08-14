@@ -226,6 +226,11 @@ add chip user to i2c group to have correct permissions.
 sudo usermod -aG i2c chip
 ~~~~
 
+## setting up audio
+~~~~
+sudo apt-get install -y pulseaudio-module-bluetooth pulseaudio-module-zeroconf
+~~~~
+
 
 ## Install git
 
